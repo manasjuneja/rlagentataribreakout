@@ -4,6 +4,9 @@ numpy>=1.21.0
 # Plotting and visualization
 matplotlib>=3.5.0
 
+# Geometry and spatial operations
+shapely>=2.0.0
+
 # The following packages are part of Python's standard library
 # and do not need to be installed separately:
 # - pickle
