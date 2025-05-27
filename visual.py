@@ -6,6 +6,16 @@ import random
 import time
 from collections import deque
 import pickle
+from shapely.geometry import LineString, box
+
+def line_intersects_rect(x1, y1, x2, y2, rx, ry, rw, rh):
+    """
+    Check if a line from (x1, y1) to (x2, y2) intersects the rectangle
+    defined by (rx, ry, rw, rh)
+    """
+    line = LineString([(x1, y1), (x2, y2)])
+    rect = box(rx, ry, rx + rw, ry + rh)
+    return line.intersects(rect)
 
 class VisualGameCompatibleDQN:
     """DQN Agent adapted to work with the visual game interface"""
@@ -457,6 +467,10 @@ class DQNVisualBreakout:
             self.paddle_x += self.current_paddle_speed
             self.paddle_x = min(self.width - self.paddle_width, self.paddle_x)
         
+        # Store previous position
+        prev_ball_x = self.ball_x
+        prev_ball_y = self.ball_y
+        
         # Update ball position
         self.ball_x += self.ball_dx
         self.ball_y += self.ball_dy
@@ -495,35 +509,28 @@ class DQNVisualBreakout:
         prev_ball_x = self.ball_x - self.ball_dx
         prev_ball_y = self.ball_y - self.ball_dy
 
-        # Ball collision with bricks
+        # Ball collision with bricks using line-rectangle intersection
         for brick in self.bricks:
             if not brick['active']:
                 continue
 
-            if (self.ball_x + self.ball_radius >= brick['x'] and
-                self.ball_x - self.ball_radius <= brick['x'] + self.brick_width and
-                self.ball_y + self.ball_radius >= brick['y'] and
-                self.ball_y - self.ball_radius <= brick['y'] + self.brick_height):
-
-                # Determine where the ball came from
-                from_left = prev_ball_x + self.ball_radius <= brick['x']
-                from_right = prev_ball_x - self.ball_radius >= brick['x'] + self.brick_width
-                from_top = prev_ball_y + self.ball_radius <= brick['y']
-                from_bottom = prev_ball_y - self.ball_radius >= brick['y'] + self.brick_height
-
-                # Flip velocity based on where it came from
-                if from_left or from_right:
-                    self.ball_dx = -self.ball_dx
-                elif from_top or from_bottom:
+            if line_intersects_rect(
+                prev_ball_x, prev_ball_y,
+                self.ball_x, self.ball_y,
+                brick['x'], brick['y'],
+                self.brick_width, self.brick_height
+            ):
+                # Determine side of collision by comparing entry direction
+                if prev_ball_y < brick['y'] or prev_ball_y > brick['y'] + self.brick_height:
                     self.ball_dy = -self.ball_dy
                 else:
-                    # Fallback if unclear (corner hit)
-                    self.ball_dy = -self.ball_dy
+                    self.ball_dx = -self.ball_dx
 
                 brick['active'] = False
                 self.game_stats['score'] += brick['points']
                 self.game_stats['bricks_destroyed'] += 1
                 break
+
 
 
 
