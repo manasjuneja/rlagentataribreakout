@@ -186,25 +186,6 @@ Customize difficulty configurations in the DifficultyLevels class:
 - Save agents periodically during long training runs
 - Test different difficulty levels to find optimal challenge
 
-## Example Usage
-
-\`\`\`python
-# Train a new agent
-from main import comprehensive_training
-
-agent, tracker, env = comprehensive_training(episodes=1000)
-
-# Load and test existing agent
-from main import load_trained_agent, demo_trained_agent
-
-agent = load_trained_agent("adaptive_dqn_agent_20240101_120000.pkl")
-demo_trained_agent(agent, episodes=5)
-
-# Use with visual interface
-from interface import integrate_dqn_with_visual_game
-
-integrate_dqn_with_visual_game(trained_agent=agent, difficulty_level='HARD')
-\`\`\`
 
 ## Contributing
 
