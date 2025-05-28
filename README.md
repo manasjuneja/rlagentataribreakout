@@ -19,7 +19,7 @@ A Deep Q-Network (DQN) implementation with adaptive difficulty for the classic B
 
 ## Requirements
 
-\`\`\`
+```bash
 numpy
 matplotlib
 pickle (built-in)
@@ -28,22 +28,24 @@ collections (built-in)
 datetime (built-in)
 time (built-in)
 random (built-in)
-\`\`\`
+```
 
 ## Quick Start
 
 ### Training a New Agent
 
-\`\`\`bash
+```bash
 python main.py
-\`\`\`
+```
+
 
 
 ### Using the Visual Interface
 
-\`\`\`bash
+```bash
 python interface.py
-\`\`\`
+```
+
 
 Choose integration option:
 1. Demo integration (rule-based agent)
